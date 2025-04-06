@@ -1,0 +1,452 @@
+{
+	"info": {
+		"_postman_id": "ee8bb347-3968-45f9-9de1-8dbff01728e2",
+		"name": "GoldDiggerAPI",
+		"description": "## Allgemeine Informationen\n\n- **Collection Name:** GD_API_Testing\n    \n- **Base URL:** `https://localhost:7201/`\n    \n- **Format:** JSON\n    \n- **Auth:** Keine Authentifizierung konfiguriert\n    \n\n---\n\n## API-Endpunkte\n\n### 1\\. GetAllClaims\n\n**Beschreibung:** Ruft alle Schürfrechte (Claims) ab.\n\n- **Methode:** `GET`\n    \n- **URL:** `https://localhost:7201/Claims`\n    \n- **Headers:** Keine erforderlich\n    \n- **Response Codes:**\n    \n    - `200 OK` – Erfolgreiche Antwort mit einer Liste von Claims\n        \n\n**Tests:**\n\n- Prüft, ob die Antwort `200 OK` ist.\n    \n- Prüft, ob die Antwort eine Liste mit den erwarteten Feldern enthält.\n    \n- Prüft, ob `goldAmount` ein nicht-negativer Wert ist.\n    \n- Prüft, ob `dateClaimed` das richtige Datumsformat hat (`YYYY-MM-DD`).\n    \n- Prüft, ob die Antwortzeit unter 200ms liegt.\n    \n\n---\n\n### 2\\. GetClaimById\n\n**Beschreibung:** Ruft einen spezifischen Claim anhand der ID ab.\n\n- **Methode:** `GET`\n    \n- **URL:** `https://localhost:7201/Claims/{id}`\n    \n- **Beispiel:** `https://localhost:7201/Claims/1`\n    \n- **Response Codes:**\n    \n    - `200 OK` – Erfolgreiche Antwort mit Claim-Daten\n        \n    - `404 Not Found` – Claim nicht gefunden\n        \n\n**Tests:**\n\n- Prüft, ob die Antwort `200 OK` ist.\n    \n- Prüft, ob die erwarteten Felder vorhanden sind.\n    \n- Prüft, ob die `id` eine nicht-negative Zahl ist.\n    \n\n---\n\n### 3\\. GetByClaimNumber\n\n**Beschreibung:** Sucht nach einem Claim anhand seiner Nummer.\n\n- **Methode:** `GET`\n    \n- **URL:** `https://localhost:7201/Claims/search?claimNumber={claimNumber}`\n    \n- **Beispiel:** `https://localhost:7201/Claims/search?claimNumber=CLM050`\n    \n- **Response Codes:**\n    \n    - `200 OK` – Erfolgreiche Antwort mit Claim-Daten\n        \n    - `404 Not Found` – Claim nicht gefunden\n        \n\n**Tests:**\n\n- Prüft, ob die Antwort `200 OK` ist.\n    \n- Validiert das Antwortschema.\n    \n\n---\n\n### 4\\. CreateClaim\n\n**Beschreibung:** Erstellt einen neuen Claim.\n\n- **Methode:** `POST`\n    \n- **URL:** `https://localhost:7201/Claims`\n    \n- **Headers:** `Content-Type: application/json`\n    \n- { \"claimNumber\": \"CLM051\", \"ownerName\": \"Dominic Nussgraber\", \"location\": \"Großhartmannsdorf\", \"goldAmount\": 6.9, \"dateClaimed\": \"1989-03-16\"}\n    \n- **Response Codes:**\n    \n    - `201 Created` – Erfolgreiche Erstellung\n        \n    - `400 Bad Request` – Ungültige Eingaben\n        \n\n**Tests:**\n\n- Prüft, ob die Antwort `201 Created` ist.\n    \n- Prüft, ob alle erwarteten Felder existieren.\n    \n- Prüft, ob `goldAmount` ein nicht-negativer Wert ist.\n    \n- Prüft, ob `dateClaimed` das richtige Datumsformat hat (`YYYY-MM-DD`).\n    \n\n---\n\n### 5\\. UpdateClaim\n\n**Beschreibung:** Aktualisiert einen bestehenden Claim.\n\n- **Methode:** `PUT`\n    \n- **URL:** `https://localhost:7201/Claims/{id}`\n    \n- **Beispiel:** `https://localhost:7201/Claims/58`\n    \n- **Headers:** `Content-Type: application/json`\n    \n- { \"claimNumber\": \"CLM051\", \"ownerName\": \"Dominic Goldgraber\", \"location\": \"Goldklumpmannsdorf\", \"goldAmount\": 42.0, \"dateClaimed\": \"2024-03-05\"}\n    \n- **Response Codes:**\n    \n    - `200 OK` – Erfolgreiche Aktualisierung\n        \n    - `400 Bad Request` – Ungültige Eingaben\n        \n    - `404 Not Found` – Claim nicht gefunden\n        \n\n**Tests:**\n\n- Prüft, ob die Antwort `200 OK` ist.\n    \n- Prüft, ob der `Content-Type` Header korrekt ist (`text/plain`).\n    \n- Prüft, ob der Antworttext gültig ist.\n    \n\n---\n\n### 6\\. DeleteClaim\n\n**Beschreibung:** Löscht einen Claim anhand der ID.\n\n- **Methode:** `DELETE`\n    \n- **URL:** `https://localhost:7201/Claims/{id}`\n    \n- **Beispiel:** `https://localhost:7201/Claims/58`\n    \n- **Response Codes:**\n    \n    - `200 OK` – Erfolgreiche Löschung\n        \n    - `404 Not Found` – Claim nicht gefunden\n        \n\n**Tests:**\n\n- Prüft, ob die Antwort `200 OK` ist.\n    \n- Prüft, ob der `Content-Type` Header `text/plain` enthält.\n    \n- Prüft, ob die Antwort den erwarteten Text enthält (`Schürfrecht mit der ID x wurde erfolgreich gelöscht.`).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42890728"
+	},
+	"item": [
+		{
+			"name": "GetAllClaims",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var template = `\r",
+							"<style type=\"text/css\">\r",
+							"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+							"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+							"    .tftable tr {background-color:#ffffff;}\r",
+							"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+							"    .tftable tr:hover {background-color:#e0ffff;}\r",
+							"</style>\r",
+							"\r",
+							"<table class=\"tftable\" border=\"1\">\r",
+							"    <tr>\r",
+							"        <th>ID</th>\r",
+							"        <th>Claim Number</th>\r",
+							"        <th>Owner Name</th>\r",
+							"        <th>Location</th>\r",
+							"        <th>Gold Amount</th>\r",
+							"        <th>Date Claimed</th>\r",
+							"    </tr>\r",
+							"    \r",
+							"    {{#each response}}\r",
+							"        <tr>\r",
+							"            <td>{{id}}</td>\r",
+							"            <td>{{claimNumber}}</td>\r",
+							"            <td>{{ownerName}}</td>\r",
+							"            <td>{{location}}</td>\r",
+							"            <td>{{goldAmount}}</td>\r",
+							"            <td>{{dateClaimed}}</td>\r",
+							"        </tr>\r",
+							"    {{/each}}\r",
+							"</table>\r",
+							"`;\r",
+							"\r",
+							"function constructVisualizerPayload() {\r",
+							"    return {response: pm.response.json()}\r",
+							"}\r",
+							"\r",
+							"pm.visualizer.set(template, constructVisualizerPayload());\r",
+							"\r",
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required fields\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('array');\r",
+							"    responseData.forEach(function(claim) {\r",
+							"        pm.expect(claim).to.have.property('id');\r",
+							"        pm.expect(claim).to.have.property('claimNumber');\r",
+							"        pm.expect(claim).to.have.property('ownerName');\r",
+							"        pm.expect(claim).to.have.property('location');\r",
+							"        pm.expect(claim).to.have.property('goldAmount');\r",
+							"        pm.expect(claim).to.have.property('dateClaimed');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Gold Amount is a non-negative integer\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    responseData.forEach(function(claim) {\r",
+							"        pm.expect(claim.goldAmount).to.be.a('number').and.to.be.at.least(0);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Date Claimed is in a valid date format\", function () {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    let dateClaimed = jsonData[0].dateClaimed; // Erstes Objekt nehmen\r",
+							"\r",
+							"    // Datumsformat auf \"YYYY-MM-DD\" ohne Zeitstring reduzieren\r",
+							"    let dateOnly = dateClaimed.split(\"T\")[0]; \r",
+							"\r",
+							"    pm.expect(dateOnly).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7201/Claims",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7201",
+					"path": [
+						"Claims"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetClaimById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required fields\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData).to.have.property('id');\r",
+							"    pm.expect(responseData).to.have.property('claimNumber');\r",
+							"    pm.expect(responseData).to.have.property('ownerName');\r",
+							"    pm.expect(responseData).to.have.property('location');\r",
+							"    pm.expect(responseData).to.have.property('goldAmount');\r",
+							"    pm.expect(responseData).to.have.property('dateClaimed');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Id is a non-negative integer\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.id).to.be.a('number').and.to.satisfy((id) => id >= 0, \"Id should be a non-negative integer\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Claim number must be a non-empty string\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.claimNumber).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7201/Claims/1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7201",
+					"path": [
+						"Claims",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetByClaimNumber",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"  pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"  });\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate the response schema for required fields\", function () {\r",
+							"  const responseData = pm.response.json();\r",
+							"  \r",
+							"  pm.expect(responseData).to.be.an('object');\r",
+							"  pm.expect(responseData).to.have.property('id');\r",
+							"  pm.expect(responseData).to.have.property('claimNumber');\r",
+							"  pm.expect(responseData).to.have.property('ownerName');\r",
+							"  pm.expect(responseData).to.have.property('location');\r",
+							"  pm.expect(responseData).to.have.property('goldAmount');\r",
+							"  pm.expect(responseData).to.have.property('dateClaimed');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7201/Claims/search?claimNumber=CLM050",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7201",
+					"path": [
+						"Claims",
+						"search"
+					],
+					"query": [
+						{
+							"key": "claimNumber",
+							"value": "CLM050"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateClaim",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 201\", function () {\r",
+							"    pm.expect(pm.response.to.have.status(201));\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required fields\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.id).to.exist;\r",
+							"    pm.expect(responseData.claimNumber).to.exist;\r",
+							"    pm.expect(responseData.ownerName).to.exist;\r",
+							"    pm.expect(responseData.location).to.exist;\r",
+							"    pm.expect(responseData.goldAmount).to.exist;\r",
+							"    pm.expect(responseData.dateClaimed).to.exist;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"GoldAmount is a non-negative integer\", function () {\r",
+							"  const responseData = pm.response.json();\r",
+							"\r",
+							"  pm.expect(responseData.goldAmount).to.be.a('number');\r",
+							"  pm.expect(responseData.goldAmount).to.be.at.least(0);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"DateClaimed is in a valid date format\", function () {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    let dateClaimed = jsonData.dateClaimed;\r",
+							"\r",
+							"    let dateOnly = dateClaimed.split(\"T\")[0];\r",
+							"\r",
+							"    pm.expect(dateOnly).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"claimNumber\": \"CLM051\",\r\n  \"ownerName\": \"Dominic Nussgraber\",\r\n  \"location\": \"Großhartmannsdorf\",\r\n  \"goldAmount\": 6.9,\r\n  \"dateClaimed\": \"1989-03-16\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7201/Claims",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7201",
+					"path": [
+						"Claims"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateClaim",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required Content-Type header\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.exist;\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/plain\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response body is in a valid format according to the expected schema\", function () {\r",
+							"    pm.expect(pm.response.text()).to.be.a('string');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"claimNumber\": \"CLM051\",\r\n  \"ownerName\": \"Dominic Goldgraber\",\r\n  \"location\": \"Goldklumpmannsdorf\",\r\n  \"goldAmount\": 42.0,\r\n  \"dateClaimed\": \"2024-03-05\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7201/Claims/58",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7201",
+					"path": [
+						"Claims",
+						"58"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteClaim",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Content-Type is correct\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    let contentType = pm.response.headers.get(\"Content-Type\");\r",
+							"    pm.expect(contentType).to.include(\"text/plain\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response body contains success message\", function () {\r",
+							"    let responseBody = pm.response.text();\r",
+							"    pm.expect(responseBody).to.match(/^Schürfrecht mit der ID \\d+ wurde erfolgreich gelöscht\\.$/);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response body matches expected format\", function () {\r",
+							"    let responseBody = pm.response.text();\r",
+							"    pm.expect(responseBody).to.match(/^Schürfrecht mit der ID \\d+ wurde erfolgreich gelöscht\\.$/);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7201/Claims/58",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7201",
+					"path": [
+						"Claims",
+						"58"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,49 @@
+@GD_API_HostAddress = http://localhost:5049
+@ClaimIdGET = 54
+@ClaimIdPUT = 55
+@ClaimIdDEL = 55
+@ClaimNumberGET = CLM051
+
+
+GET {{GD_API_HostAddress}}/Claims
+Accept: application/json
+
+
+###
+GET {{GD_API_HostAddress}}/Claims/{{ClaimIdGET}}
+Accept: application/json
+
+
+###
+GET {{GD_API_HostAddress}}/Claims/search?claimNumber={{ClaimNumberGET}}
+Accept: application/json
+
+
+###
+POST {{GD_API_HostAddress}}/Claims
+Content-Type: application/json
+
+{
+  "claimNumber": "CLM051",
+  "ownerName": "Dominic Nussgraber",
+  "location": "Groﬂhartmannsdorf",
+  "goldAmount": 6.9,
+  "dateClaimed": "1989-03-16"
+}
+
+
+###
+PUT {{GD_API_HostAddress}}/Claims/{{ClaimIdPUT}}
+Content-Type: application/json
+
+{
+  "claimNumber": "CLM051",
+  "ownerName": "Dominic Goldgraber",
+  "location": "Goldklumpmannsdorf",
+  "goldAmount": 42.0,
+  "dateClaimed": "2024-03-05"
+}
+
+
+###
+DELETE {{GD_API_HostAddress}}/Claims/{{ClaimIdDEL}}
