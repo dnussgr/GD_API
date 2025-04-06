@@ -1,7 +1,9 @@
 ﻿# Gold Digger API - GD_API
 
 ## Beschreibung
-Eine einfache ASP.NET Core Web API zur Verwaltung von Schürfrechten, die auf Daten einer MySQL-Datenbank zugreift. Unterstützt CRUD-Operationen für Claims.
+Eine einfache ASP.NET Core Web API zur Verwaltung von Schürfrechten, die auf Daten einer MySQL-Datenbank zugreift.
+Unterstützt CRUD-Operationen für Claims.
+
 Diese API wurde während meiner Ausbildung erstellt und wird in Zukunft weiterentwickelt.
 
 ## Endpunkte
